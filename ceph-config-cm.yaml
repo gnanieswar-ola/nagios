@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ceph-configmap
+data:
+  ceph.conf: |
+    [global]
+    mon_host = 172.31.55.86:6789
+    
+    [client.admin]
+    keyring = /etc/ceph/keyring
+

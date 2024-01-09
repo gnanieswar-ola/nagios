@@ -1,0 +1,199 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: commands-configmap
+data:
+  commands.cfg: |
+    ###############################################################################
+    # COMMANDS.CFG - SAMPLE COMMAND DEFINITIONS FOR NAGIOS 4.1.1
+    #
+    # NOTES: This config file provides you with some example command definitions
+    #        that you can reference in host, service, and contact definitions.
+    #
+    #        You don't need to keep commands in a separate file from your other
+    #        object definitions. This has been done just to make things easier to
+    #        understand.
+    #
+    ###############################################################################
+
+    # 'notify-host-by-email' command definition
+    define command {
+        command_name notify-host-by-email
+        command_line /usr/bin/mail -s "** $NOTIFICATIONTYPE$ Host Alert: $HOSTNAME$ is $HOSTSTATE$ **" $CONTACTEMAIL$
+    }
+
+    # 'notify-service-by-email' command definition
+    define command {
+        command_name notify-service-by-email
+        command_line /usr/bin/mail -s "** $NOTIFICATIONTYPE$ Service Alert: $HOSTALIAS$/$SERVICEDESC$ is $SERVICESTATE$ **" $CONTACTEMAIL$
+    }
+  
+    # 'check-host-alive' command definition
+    define command{
+        command_name    check-host-alive
+        command_line    $USER1$/check_ping -H $HOSTADDRESS$ -w 3000.0,80% -c 5000.0,100% -p 5
+    }
+
+    # 'check_local_disk' command definition
+    define command{
+        command_name    check_local_disk
+        command_line    $USER1$/check_disk -w $ARG1$ -c $ARG2$ -p $ARG3$
+    }
+
+    # 'check_local_load' command definition
+    define command{
+        command_name    check_local_load
+        command_line    $USER1$/check_load -w $ARG1$ -c $ARG2$
+    }
+
+    # 'check_local_procs' command definition
+    define command{
+        command_name    check_local_procs
+        command_line    $USER1$/check_procs -w $ARG1$ -c $ARG2$ -s $ARG3$
+    }
+
+    # 'check_local_users' command definition
+    define command{
+        command_name    check_local_users
+        command_line    $USER1$/check_users -w $ARG1$ -c $ARG2$
+    }
+
+    # 'check_local_swap' command definition
+    define command{
+        command_name    check_local_swap
+        command_line    $USER1$/check_swap -w $ARG1$ -c $ARG2$
+    }
+
+    # 'check_local_mrtgtraf' command definition
+    define command{
+        command_name    check_local_mrtgtraf
+        command_line    $USER1$/check_mrtgtraf -F $ARG1$ -a $ARG2$ -w $ARG3$ -c $ARG4$ -e $ARG5$
+    }
+
+    # 'check_ftp' command definition
+    define command{
+        command_name    check_ftp
+        command_line    $USER1$/check_ftp -H $HOSTADDRESS$ $ARG1$
+    }
+
+    # 'check_hpjd' command definition
+    define command{
+        command_name    check_hpjd
+        command_line    $USER1$/check_hpjd -H $HOSTADDRESS$ $ARG1$
+    }
+
+    # 'check_snmp' command definition
+    define command{
+        command_name    check_snmp
+        command_line    $USER1$/check_snmp -H $HOSTADDRESS$ $ARG1$
+    }
+
+    # 'check_http' command definition
+    define command{
+        command_name    check_http
+        command_line    $USER1$/check_http -I $HOSTADDRESS$ $ARG1$
+    }
+
+    # 'check_ssh' command definition
+    define command{
+        command_name    check_ssh
+        command_line    $USER1$/check_ssh $ARG1$ $HOSTADDRESS$
+    }
+
+    # 'check_dhcp' command definition
+    define command{
+        command_name    check_dhcp
+        command_line    $USER1$/check_dhcp $ARG1$
+    }
+
+    # 'check_ping' command definition
+    define command{
+        command_name    check_ping
+        command_line    $USER1$/check_ping -H $HOSTADDRESS$ -w $ARG1$ -c $ARG2$ -p 5
+    }
+
+    # 'check_pop' command definition
+    define command{
+        command_name    check_pop
+        command_line    $USER1$/check_pop -H $HOSTADDRESS$ $ARG1$
+    }
+
+    # 'check_imap' command definition
+    define command{
+        command_name    check_imap
+        command_line    $USER1$/check_imap -H $HOSTADDRESS$ $ARG1$
+    }
+
+    # 'check_smtp' command definition
+    define command{
+        command_name    check_smtp
+        command_line    $USER1$/check_smtp -H $HOSTADDRESS$ $ARG1$
+    }
+
+    # 'check_tcp' command definition
+    define command{
+        command_name    check_tcp
+        command_line    $USER1$/check_tcp -H $HOSTADDRESS$ -p $ARG1$ $ARG2$
+    }
+
+    # 'check_udp' command definition
+    define command{
+        command_name    check_udp
+        command_line    $USER1$/check_udp -H $HOSTADDRESS$ -p $ARG1$ $ARG2$
+    }
+
+    # 'check_nt' command definition
+    define command{
+        command_name    check_nt
+        command_line    $USER1$/check_nt -H $HOSTADDRESS$ -p 12489 -v $ARG1$ $ARG2$
+    }
+
+    # Ceph Command Definitions
+    define command{
+        command_name    check_ceph_health
+        command_line    /usr/lib/nagios/plugins/check_ceph_health
+    }
+    define command{
+        command_name    check_ceph_health_wargs
+        command_line    /usr/lib/nagios/plugins/check_ceph_health -H '$HOSTADDRESS$'
+    }
+    define command{
+        command_name    check_ceph_health_filtered
+        command_line    /usr/lib/nagios/plugins/check_ceph_health -H '$HOSTADDRESS$' --check '$ARG1' --whitelist '$ARG2'
+    }
+    define command{
+        command_name    check_ceph_mon
+        command_line    /usr/lib/nagios/plugins/check_ceph_mon -I '$ARG1$'
+    }
+    define command{
+        command_name    check_ceph_mon_wargs
+        command_line    /usr/lib/nagios/plugins/check_ceph_mon -I '$ARG1$' -m '$ARG2$' -i '$ARG3$' -k '$ARG4$'
+    }
+    define command{
+        command_name    check_ceph_osd
+        command_line    /usr/lib/nagios/plugins/check_ceph_osd -H '$HOSTADDRESS$' -I '$ARG1$'
+    }
+    define command{
+        command_name    check_ceph_osd_wmon
+        command_line    /usr/lib/nagios/plugins/check_ceph_osd -H '$HOSTADDRESS$' -I '$ARG1$' -m '$ARG2$' -i '$ARG3$' -k '$ARG4$'
+    }
+    define command{
+        command_name    check_ceph_rgw
+        command_line    /usr/lib/nagios/plugins/check_ceph_rgw
+    }
+    define command{
+        command_name    check_ceph_rgw_api
+        command_line    /usr/lib/nagios/plugins/check_ceph_rgw_api -h '$HOSTADDRESS$' -a '$ARG1$' -s '$ARG2$'
+    }
+    define command{
+        command_name    check_ceph_df
+        command_line    /usr/lib/nagios/plugins/check_ceph_df -i '$ARG1$' -k '$ARG2$' -W '$ARG3$' -C '$ARG4$' -d
+    }
+    define command{
+        command_name    check_ceph_osd_df
+        command_line    /usr/lib/nagios/plugins/check_ceph_osd_df -m '$ARG1$' -i '$ARG2$' -k '$ARG3$' -W '$ARG4$' -C '$ARG5$'
+    }
+    define command{
+        command_name    check_ceph_mgr
+        command_line    /usr/lib/nagios/plugins/check_ceph_mgr
+    }    

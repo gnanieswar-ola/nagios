@@ -1,0 +1,163 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: client-configmap
+data:
+  localhost.cfg: |
+    # Define a host for the local machine
+    define host{
+        use                     linux-server
+        host_name               localhost
+        alias                   localhost
+        address                 127.0.0.1
+    }
+
+    # Define an optional hostgroup for Linux machines
+    define hostgroup{
+        hostgroup_name  linux-servers
+        alias           Linux Servers
+        members         localhost
+    }
+
+    # Define a host for the EC2 instance
+    define host {
+        use                     linux-server
+        host_name               ip-172-31-55-86
+        alias                   Ceph Node 1 
+        address                 172.31.55.86   ; Replace with the actual EC2 instance IP
+    }
+
+    # Service definitions for both localhost and EC2 instance
+    define service{
+        use                             local-service,graphed-service
+        host_name                       localhost, ip-172-31-55-86
+        service_description             PING
+        check_command                   check_ping!100.0,20%!500.0,60%
+    }
+
+    define service{
+        use                             local-service,graphed-service
+        host_name                       localhost, ip-172-31-55-86
+        service_description             Root Partition
+        check_command                   check_local_disk!20%!10%!/
+    }
+
+    define service{
+        use                             local-service,graphed-service
+        host_name                       localhost, ip-172-31-55-86
+        service_description             Current Users
+        check_command                   check_local_users!20!50
+    }
+
+    define service{
+        use                             local-service,graphed-service
+        host_name                       localhost, ip-172-31-55-86
+        service_description             Total Processes
+        check_command                   check_local_procs!250!400!RSZDT
+    }
+
+    define service{
+        use                             local-service,graphed-service
+        host_name                       localhost, ip-172-31-55-86
+        service_description             Current Load
+        check_command                   check_local_load!5.0,4.0,3.0!10.0,6.0,4.0
+    }
+
+    define service{
+        use                             local-service,graphed-service
+        host_name                       localhost, ip-172-31-55-86
+        service_description             Swap Usage
+        check_command                   check_local_swap!20!10
+    }
+
+    define service{
+        use                             local-service,graphed-service
+        host_name                       localhost, ip-172-31-55-86
+        service_description             HTTP
+        check_command                   check_http
+        notifications_enabled           0
+    }
+
+    define service {
+        use                 generic-service
+        host_name           ip-172-31-55-86
+        service_description Check Ceph Health
+        check_command       check_ceph_health
+    }
+
+    define service {
+        use                 generic-service
+        host_name           ip-172-31-55-86
+        service_description Ceph first Mon
+        check_command       check_ceph_mon!a
+    }
+
+    define service {
+        use                 generic-service
+        host_name           ip-172-31-55-86
+        service_description Ceph Second Mon
+        check_command       check_ceph_mon!b
+    }
+
+    define service {
+        use                 generic-service
+        host_name           ip-172-31-55-86
+        service_description Ceph Third Mon
+        check_command       check_ceph_mon!c
+    }
+
+    define service {
+        use                 generic-service
+        host_name           ip-172-31-55-86
+        service_description Ceph first OSD
+        check_command       check_ceph_osd!0
+    }
+   
+    define service {
+        use                 generic-service
+        host_name           ip-172-31-55-86
+        service_description Ceph second OSD
+        check_command       check_ceph_osd!1
+    }    
+
+    define service {
+        use                 generic-service
+        host_name           ip-172-31-55-86
+        service_description Ceph third OSD
+        check_command       check_ceph_osd!2
+    }    
+
+    define service {
+        use                 generic-service
+        host_name           ip-172-31-55-86
+        service_description Ceph fourth OSD
+        check_command       check_ceph_osd!3
+    }
+
+    define service {
+        use                 generic-service
+        host_name           ip-172-31-55-86
+        service_description Ceph fifth OSD
+        check_command       check_ceph_osd!4
+    }    
+
+    define service {
+        use                 generic-service
+        host_name           ip-172-31-55-86
+        service_description Ceph RGW
+        check_command       check_ceph_rgw
+    }
+
+    define service {
+        use                 generic-service
+        host_name           ip-172-31-55-86
+        service_description Ceph DF
+        check_command       check_ceph_df!nagios!/usr/lib/nagios/plugins/ceph.client.nagios.keyring!26.14!30
+    }
+
+    define service {
+        use                 generic-service
+        host_name           ip-172-31-55-86
+        service_description Ceph mgr
+        check_command       check_ceph_mgr
+    }

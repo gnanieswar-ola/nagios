@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nagios-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nagios-core
+  template:
+    metadata:
+      labels:
+        app: nagios-core
+    spec:
+      volumes:
+        - name: client-config-volume
+          configMap:
+            name: client-configmap
+            items:
+              - key: localhost.cfg
+                path: localhost.cfg 
+        - name: commands-config-volume
+          configMap:
+            name: commands-configmap
+            items:
+              - key: commands.cfg
+                path: commands.cfg  
+        - name: ring-config-volume
+          configMap:
+            name: nagios-client-ring-configmap
+            items:
+              - key: ceph.client.nagios.keyring
+                path: ceph.client.nagios.keyring  
+        - name: ceph-conf-volume  
+          configMap:
+            name: ceph-configmap
+            items:
+              - key: ceph.conf
+                path: ceph.conf  
+        - name: ceph-admin-key-volume  
+          configMap:
+            name: ceph-client-admin-key-configmap
+            items:
+              - key: keyring
+                path: keyring  
+        - name: ceph-client-nagios-keyring  
+          configMap:
+            name: nagios-client-ring-configmap
+            items:
+              - key: ceph.client.nagios.keyring
+                path: ceph.client.nagios.keyring
+      containers:
+        - name: nagios-container
+          image: gnanieswar195/nagios-ceph:23.0
+          volumeMounts:
+            - name: client-config-volume
+              mountPath: /opt/nagios/etc/objects/localhost.cfg
+              subPath: localhost.cfg  
+            - name: commands-config-volume
+              mountPath: /opt/nagios/etc/objects/commands.cfg
+              subPath: commands.cfg  
+            - name: ring-config-volume
+              mountPath: /opt/nagios/etc/objects/ceph.client.nagios.keyring
+              subPath: ceph.client.nagios.keyring  
+            - name: ceph-conf-volume  
+              mountPath: /etc/ceph/ceph.conf
+              subPath: ceph.conf  
+            - name: ceph-admin-key-volume  
+              mountPath: /etc/ceph/keyring
+              subPath: keyring  
+            - name: ceph-client-nagios-keyring  
+              mountPath: /usr/lib/nagios/plugins/ceph.client.nagios.keyring
+              subPath: ceph.client.nagios.keyring 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nagios-service
+spec:
+  type: NodePort
+  selector:
+    app: nagios-core
+  ports:
+    - port: 80
+      targetPort: 80
+

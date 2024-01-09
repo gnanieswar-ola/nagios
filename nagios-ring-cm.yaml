@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nagios-client-ring-configmap
+data:
+  ceph.client.nagios.keyring: |
+    [client.nagios]
+            key = AQCXyZtl+JDUORAAdxC6wof046iTX37g3vzOSw==
